@@ -1,0 +1,429 @@
+% tipo por omisión; no se requiere nada más
+\documentclass[]{article}
+
+% layout
+\usepackage[letterpaper, margin = 1.5cm]{geometry}
+
+% entornos (alinea ecuaciones, referencias internas)
+\usepackage{amsmath}
+
+% manejo de posición de tablas
+\usepackage{float}
+
+\begin{document}
+    \title {
+        Organización y Arquitectura de Computadoras \\
+        2019-2 \\
+        Desempeño
+    }
+    \author{
+        Edgar Quiroz Castañeda
+    }
+    \date{
+        25 de febrero del 2019
+    }
+    \maketitle
+
+    \section{
+        Ecuación de desempeño del CPU
+    }
+    Calcula el tiempo de ejecución de cada programa en diferentes computadoras.\\
+    En general, con $f$ la frecuencia, $c$ la cantidad de ciclos, y $t$ el 
+    tiempo, se tiene que
+    \begin{align}
+        &f_{K} = \frac{c_{K}}{t_{K}} \nonumber \\
+        &\implies t_{K} = \frac{c_{K}}{f_{K}} \label{eq1}
+    \end{align}
+    Y con $\lambda$ la longitud de un ciclo (inversa de la frecuencia), tenemos 
+    que 
+    \begin{align}
+        &\lambda_{K} = \frac{t_{K}}{c_{K}} \nonumber \\
+        &\implies t_{K} = t_{K} \cdot \lambda_{K} \label{eq2}
+    \end{align}
+    En el caso de $A$ (2.7 MGHz) y $C$ (48 MGHz), se conoce la frecuencia, por 
+    lo que se va a utilizar
+    \eqref{eq1}. 
+    \[
+    \vec{t}_{A, C} = 
+    \begin{bmatrix}
+        24 \times 10^6 & 24 \times 10^6\\ 
+        28 \times 10^6 & 28 \times 10^6\\
+        15 \times 10^6 & 15 \times 10^6\\
+        300 \times 10^3 & 300 \times 10^3\\
+        100 \times 10^6 & 100 \times 10^6
+    \end{bmatrix}    
+    \cdot
+    \begin{bmatrix}
+        \frac{1}{2.7 \times 10^{9}} & 0\\
+        0 & \frac{1}{48 \times 10^{6}}
+    \end{bmatrix}
+    \approx
+    \begin{bmatrix}
+        0.00888 & 0.5 \\
+        0.01778 & 1 \\
+        0.00556 & 0.3125 \\
+        0.000112 & 0.00625 \\ 
+        0.03704 & 2.083
+    \end{bmatrix}
+    \]
+
+    Para $B$ (3ns/ciclo) y $D$ (4ms/ciclo), se usará \eqref{eq2}, pues se conoce 
+    su longitud de ciclo.
+
+    \[
+    \vec{t}_{B,D} = 
+    \begin{bmatrix}
+        24 \times 10^6 & 24 \times 10^6\\ 
+        28 \times 10^6 & 28 \times 10^6\\
+        15 \times 10^6 & 15 \times 10^6\\
+        300 \times 10^3 & 300 \times 10^3\\
+        100 \times 10^6 & 100 \times 10^6
+    \end{bmatrix}    
+    \begin{bmatrix}
+        3 \times 10^{-9} & 0\\
+        0 & 4 \times 10^{-3}
+    \end{bmatrix}
+    \approx
+    \begin{bmatrix}
+        0.072 & 96000 \\
+        0.144 & 192000 \\
+        0.045 & 60000 \\
+        0.0009 & 1200 \\
+        0.3 & 400000
+    \end{bmatrix}
+    \]
+
+    Por lo que la tabla de tiempos completa es 
+    \begin{table}[!h]
+        \centering
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+            Ciclos & $A$ & $B$ & $C$ & $D$ \\
+            \hline
+            24 M & 0.00888 seg & 0.072 seg & 0.5 seg & 96000 seg \\
+            28 M & 0.01778 seg & 0.144 seg & 1 seg & 192000 seg \\
+            15 M & 0.00556 seg & 0.045 seg & 0.3125 seg & 60000 seg \\
+            300 K & 0.000112 & 0.0009 seg & 0.00625 seg & 1200 seg \\
+            100 M & 0.03704 seg & 0.3 seg & 2.083 seg & 400000 seg\\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \section{
+        Medidas de tendencia central
+    }
+
+    Considera los siguientes tiempos de ejecución
+
+    \begin{table}[H]
+        \centering
+        \caption{Datos}
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+             & $A$ & $B$ & $C$ & $D$ \\
+            \hline
+            Prog 1 & 83ns & 20ns & 56ns & 121ns \\
+            Prog 2 & 1938ns & 949ns & 1453ns & 2342ns \\
+            Prog 3 & 844ns & 939ns & 932ns & 638ns \\
+            Prog 4 & 994ns & 593ns & 734ns & 1029ns \\
+            Prog 5 & 95ns & 19ns & 24ns & 68ns \\
+            \hline
+        \end{tabular}
+    \end{table}
+    Encuentre las medias aritmética, armónica y geométrica.
+
+    \begin{enumerate}
+        \item {
+            Para la media aritmética, tenemos que 
+            \[\vec{M}_{arit} = 
+            \frac{1}{5}
+            \begin{bmatrix}
+                1 & 1 & 1 & 1 & 1 
+            \end{bmatrix}
+            \begin{bmatrix}
+                83 & 20 & 56 & 121 \\
+                1938 & 949 & 1453 & 2342 \\
+                844 & 939 & 932 & 638 \\
+                994 & 593 & 734 & 1029 \\
+                95 & 19 & 24 & 68 \\
+            \end{bmatrix}
+            = 
+            \frac{1}{5}
+            \begin{bmatrix}
+                3954 & 2520 & 3199 & 4198
+            \end{bmatrix}
+            = 
+            \begin{bmatrix}
+                790.8 & 504.  & 639.8 & 839.6
+            \end{bmatrix}
+            \]
+        }
+        \item {
+            Para la media armónica tenemos que 
+            \[\vec{M}_{arm}^{-1} = 
+            \frac{1}{5}
+            \begin{bmatrix}
+                1 & 1 & 1 & 1 & 1 
+            \end{bmatrix}
+            \begin{bmatrix}
+                \frac{1}{ 83} &\frac{1}{ 20} &\frac{1}{ 56} & \frac{1}{121} \\
+                \frac{1}{938} & \frac{1}{949} & \frac{1}{453} & \frac{1}{2342} \\
+                \frac{1}{844} & \frac{1}{939} & \frac{1}{932} & \frac{1}{638} \\
+                \frac{1}{994} & \frac{1}{593} & \frac{1}{734} & \frac{1}{1029} \\
+                \frac{1}{ 95} &\frac{1}{ 19} &\frac{1}{ 24} & \frac{1}{68} \\
+            \end{bmatrix}
+            \approx
+            \frac{1}{5}
+            \begin{bmatrix}
+                0.02528 & 0.10644 & 0.06265 & 0.02594
+            \end{bmatrix}
+            \]
+            Por lo que 
+            \[\vec{M}_{arm} \approx
+            5 
+            \begin{bmatrix}
+                39.554811 & 9.39526 & 15.96235 & 38.55563
+            \end{bmatrix}
+            \approx 
+            \begin{bmatrix}
+                192.77405 & 46.9763  & 79.81177 & 192.77817
+            \end{bmatrix}
+            \]
+        }
+        \item {
+            Y para la media geométrica
+            \begin{align*}
+                \vec{M}_{geo} ^{5}
+                &= 
+                \begin{bmatrix}
+                    83 \cdot 1938\cdot  844\cdot 994 \cdot 95 
+                    & 20 \cdot 949 \cdot 939 \cdot 593 \cdot 19  
+                    & 56 \cdot 1453 \cdot 932 \cdot 734 \cdot 24
+                    & 121 \cdot 2342 \cdot 638 \cdot 1029 \cdot 68
+                \end{bmatrix} \\
+                &= 
+                \begin{bmatrix}
+                    12819890077680 & 200802952740 & 1335908937216 & 12650777783952
+                \end{bmatrix}
+            \end{align*}
+            Por lo que 
+            \[\vec{M}_{geo} \approx 
+            \begin{bmatrix}
+                418.38572 & 182.20236 & 266.16771 & 417.27603
+            \end{bmatrix}
+            \]
+        }
+    \end{enumerate}
+    Entonces, la tabla completa de medias es 
+    \begin{table}[H]
+        \centering
+        \caption{Medias}
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+             Medias & $A$ & $B$ & $C$ & $D$ \\
+            \hline
+            Aritmética & 790.8 & 504 & 639.8 & 839.6 \\
+            Armónica & 197.77405481  & 46.97631186 & 79.81177196 & 192.77817439 \\
+            Geométrica & 418.38572689 & 182.20236881 & 266.1677118 & 417.27603733 \\
+            \hline
+        \end{tabular}
+    \end{table}
+    
+    Normaliza $A$ y $D$ respecto a $B$.
+    \[\hat{AD}_{B} = 
+    \begin{bmatrix}
+        83 / 20 & 121 / 20 \\
+        1938 / 949 & 2342 / 949 \\
+        844 / 939 & 638 / 939 \\
+        994 / 593 & 102 / 5939 \\
+        95 / 19 & 68 / 19 \\ 
+    \end{bmatrix}
+    \approx 
+    \begin{bmatrix}
+        4.15 & 6.05 \\
+        2.04214963 & 2.46786091 \\
+        0.89882854 & 0.67944622 \\
+        1.6762226 & 1.73524452 \\
+        5 & 3.57894737 \\
+    \end{bmatrix}
+    \]
+    Por lo que la tabla de datos normalizados es
+    \begin{table}[H]
+        \centering
+        \caption{Datos normalizados respecto a B}
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+             & $A$ & $D$ \\
+            \hline
+            Prog 1 & 4.15 & 6.05 \\
+            Prog 2 & 2.04214963 & 2.46786091 \\
+            Prog 3 & 0.89882854 & 0.67944622 \\
+            Prog 4 & 1.6762226 & 1.73524452 \\
+            Prog 5 & 5 & 3.57894737 \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    Encuetra las medias de los datos normalizados
+
+    \begin{enumerate}
+        \item {
+            Para la media aritmética, tenemos que 
+            \[\vec{M}_{arit} = 
+            \frac{1}{5}
+            \begin{bmatrix}
+                1 & 1 & 1 & 1 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+                4.15 & 6.05 \\
+                2.04214963 & 2.46786091 \\
+                0.89882854 & 0.67944622 \\
+                1.6762226 & 1.73524452 \\
+                5 & 3.57894737 \\
+            \end{bmatrix}
+            \approx
+            \frac{1}{5}
+            \begin{bmatrix}
+                13.76720 & 14.511499
+            \end{bmatrix}
+            = 
+            \begin{bmatrix}
+                2.75344 & 2.90229
+            \end{bmatrix}
+            \]
+        }
+        \item {
+            Para la media armónica tenemos que 
+            \[\vec{M}_{arm}^{-1} = 
+            \frac{1}{5}
+            \begin{bmatrix}
+                1 & 1 & 1 & 1 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+                \frac{1}{4.15} & \frac{1}{6.05} \\
+                \frac{1}{2.04214963} & \frac{1}{2.46786091} \\
+                \frac{1}{0.89882854} & \frac{1}{0.67944622} \\
+                \frac{1}{1.6762226} & \frac{1}{1.73524452} \\
+                \frac{1}{5} & \frac{1}{3.57894737} \\
+            \end{bmatrix}
+            \approx
+            \frac{1}{5}
+            \begin{bmatrix}
+                2.63978 & 2.89798
+            \end{bmatrix}
+            \]
+            Por lo que 
+            \[\vec{M}_{arm} \approx
+            5 
+            \begin{bmatrix}
+                0.378819 & 0.345067
+            \end{bmatrix}
+            \approx 
+            \begin{bmatrix}
+                1.8940953 & 1.7253369
+            \end{bmatrix}
+            \]
+        }
+        \item {
+            Y para la media geométrica
+            \begin{align*}
+                \vec{M}_{geo} ^{5}
+                &= 
+                \begin{bmatrix}
+                    4.15 \cdot 2.04214963 \cdot 0.89882854 \cdot 1.6762226 \cdot 5 
+                    & 6.05 \cdot 2.46786091 \cdot 0.67944622 \cdot 1.73524452 \cdot 3.57894737\\
+                \end{bmatrix} \\
+                &= 
+                \begin{bmatrix}
+                    63.84313528635815 & 63.00095497267039
+                \end{bmatrix}
+            \end{align*}
+            Por lo que 
+            \[\vec{M}_{geo} \approx 
+            \begin{bmatrix}
+                2.296269 & 2.29017899
+            \end{bmatrix}
+            \]
+        }    
+        
+    \end{enumerate}
+    Por lo que la tabla completa de medidas es 
+    \begin{table}[H]
+        \centering
+        \caption{Medias con datos normalizados}
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+             Medias & $A$ & $D$ \\
+            \hline
+            Aritmética & 2.75344015 & 2.9022998   \\
+            Armónica & 1.89409533 & 1.7253369 \\
+            Geométrica & 2.29626942 & 2.29017899 \\
+            \hline
+        \end{tabular}
+    \end{table}
+    
+    Y compara el desempeño usando la media geométrica no normalizada.\\
+    Las computadoras, de mejor a peor desempeño, son $B$, $C$, $D$ y $A$.
+
+    \section{
+        Ley de Amdahl
+    }
+
+    \begin{enumerate}
+        \item {
+            Una transformación común requerida en los procesadores es la 
+            raíz cuadrada. Supongoamos que esta es responsable del 25\% del 
+            tiempo total de ejecución. Se tienen dos propuestas para mejorar.
+            \begin{enumerate}
+                \item {
+                    Modificar el hardware de forma que la operación sea 8 
+                    veces más rápida.
+                }
+                \item {
+                    Tratar que las operaciones que ocupan el 55\% del 
+                    tiempo restante se ejecuten 1.8 veces más rápido.
+                }
+            \end{enumerate}
+            ¿Cómo mejora el desempeño en ambos casos?¿Cuál es mejor? \\
+            En el primer caso hay una ganancia de 
+            \[G = \frac{1}{(1-0.25) + \frac{0.25}{8}} = \frac{1}{0.75 + 0.03125} 
+            = \frac{1}{0.78125} = 1.28\]
+            En el segundo caso, la ganancia es de 
+            \[G = \frac{1}{(1-0.55) + \frac{0.55}{1.8}} \approx \frac{1}{0.45 + 0.305} 
+            = \frac{1}{0.755} \approx 1.324\]
+            Por lo que es más conveninte tratar de mejorar el resto de las 
+            operaciones.
+        }
+        \item {
+            Tenemos un programa que consiste de 3 procesos $A$, $B$ y $C$. El 
+            tiempo que tarda en ejecutarse es de 17 segundos. Los procesos toman
+            32\%, 7\% y 25\% del tiempo respectivamente. Si se mejor el proceso
+            B 20 veces, ¿cuál es el nuevo tiempo de ejecución?. ¿Y si se mejora
+            el proceso A 1.4 veces? ¿Qué mejora es mejor?\\
+            En el primer caso, se tiene un tiempo mejorado de 
+            \[T_{m} = 17 \cdot ((1-0.07) + \frac{0.07}{20}) 
+            = 17 \cdot (0.93 + 0.0035) = 17 \cdot 0.9335 = 15.8695\]
+            En el segundo caso, el nuevo tiempo es de 
+            \[T_{m} = 17 \cdot ((1-0.32) + \frac{0.32}{1.4}) 
+            \approx 17 \cdot (0.68 + 0.22857) = 17 \cdot 0.90867 = 15.4457\]
+            Por lo que es más conveninte mejorar lel proceso A 1.4 veces.
+        }
+        \item {
+            Se mejora un proceso que tomaba 70\% de tiempo de ejecución. Se 
+            obtubo una ganancia neta de 2.64. ¿Cuál es la ganancia bruta? \\
+            La ganancia neta está dada por 
+            \[G = \frac{1}{1-F + \frac{F}{g}}\]
+            Con $F$ el porcentaje de tiempo y $g$ la ganancia bruta. \\
+            Despejando $g$, 
+            \begin{align*}
+                G &= \frac{1}{1-F + \frac{F}{g}} \\
+                \implies 1-F + \frac{F}{g} &= \frac{1}{G} \\
+                \implies  \frac{F}{g} &= \frac{1}{G} + F - 1 \\
+                \implies g &= \frac{F}{\frac{1}{G} + F - 1}
+            \end{align*}
+            Por lo que, es este caso, la ganancia bruta es de 
+            \[g = \frac{0.7}{\frac{1}{2.64} + 0.7 - 1} 
+            \approx \frac{0.7}{0.078788} = 8.885\]
+        }
+    \end{enumerate}
+\end{document}
